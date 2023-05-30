@@ -10,14 +10,38 @@ namespace HS_TopStyleWebApi.Extensions
             //här extendar vi swagger med att lägga till en ny metod
             Services.AddSwaggerGen(options =>
             {
-                // generell konfig av Swagger
+            // generell konfig av Swagger
 
-                options.SwaggerDoc("v1", new OpenApiInfo 
-                { 
-                    Title = "HS_TopStyleWebApi extension method", Version = "v1" 
-                });
-                //konfiguration av säkerhet i Swagger  -
-                // ******* FYLL PÅ SENARE ********
+            options.SwaggerDoc("v1", new OpenApiInfo
+            {
+                Title = "HS_TopStyleWebApi extension method", Version = "v1"
+            });
+
+            //konfiguration av säkerhet i Swagger
+            options.AddSecurityDefinition("bearer", new OpenApiSecurityScheme
+            {
+                    Type = SecuritySchemeType.ApiKey,
+                    Name = "authorization",
+                    In = ParameterLocation.Header,
+                    Description = "skriv in bearer {din jwt token} för att kunna anropa api:et."
+
+            });
+                options.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                    Type = ReferenceType.SecurityScheme,
+                                    Id = "bearer"
+                                }
+                        },
+                        new List<string>()
+                        // Mitt alternativ från Recipe
+                        //Array.Empty<string>()
+                    }
+                }); 
             });
 
             return Services;

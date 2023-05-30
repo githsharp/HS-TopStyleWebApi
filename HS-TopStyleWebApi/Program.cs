@@ -18,7 +18,9 @@ using HS_TopStyleWebApi.Repos;
 using System.Collections.Generic;
 using HS_TopStyleWebApi.Controllers;
 using HS_TopStyleWebApi.Extensions;
-
+using HS_TopStyleWebApi.Services.Interfaces;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using HS_TopStyleWebApi.Services.Authentication;
 
 namespace HS_TopStyleWebApi
 {
@@ -37,9 +39,11 @@ namespace HS_TopStyleWebApi
                     options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
                     options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
                 });
-            //builder.Services.AddControllers();
-            //builder.Services.AddEndpointsApiExplorer();
-            //builder.Services.AddSwaggerGen();
+            builder.Services.AddControllers();
+            builder.Services.AddEndpointsApiExplorer();
+
+            // *** HÄR SKA IUSERREPOSITORY, USERREPOSITORY OCH IORDERREPOSITORY, ORDERREPOSITORY OSV LÄGGAS TILL ***
+            builder.Services.AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>();
 
             builder.Services.AddDbContext<ProductContext>(
                 options => options.UseSqlServer(@"Data Source=localhost;Initial Catalog=TopStyle;Integrated Security=SSPI;TrustServerCertificate=True;")
@@ -59,6 +63,36 @@ namespace HS_TopStyleWebApi
             //        Version = "v1"
             //    });
             //});
+
+            var jwtSettings = new JwtSettings();
+            builder.Services.AddSingleton(Options.Create(jwtSettings));
+            builder.Configuration.Bind(JwtSettings.SectionName, jwtSettings);
+
+            builder.Services.AddAuthentication(defaultScheme: JwtBearerDefaults.AuthenticationScheme)
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters()
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidIssuer = jwtSettings.Issuer,
+                        ValidAudience = jwtSettings.Audience,
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.SecretKey))
+                    };
+                });
+
+            builder.Services.AddCors(opt =>
+            {
+                opt.AddPolicy(name: "CorsPolicy", builder =>
+                {
+                    builder.WithOrigins("http://localhost:5093")
+                        .AllowAnyHeader()
+                        .AllowAnyMethod()
+                        .AllowCredentials();
+                });
+            });
 
             var app = builder.Build();
 
