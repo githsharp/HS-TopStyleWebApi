@@ -74,3 +74,6 @@ C:\Users\helen\source\repos\SQLrepos\HS-TopStyleWebApi\HS-TopStyleWebApi\obj\Deb
 C:\Users\helen\source\repos\SQLrepos\HS-TopStyleWebApi\HS-TopStyleWebApi\obj\Debug\net7.0\HS-TopStyleWebApi.pdb
 C:\Users\helen\source\repos\SQLrepos\HS-TopStyleWebApi\HS-TopStyleWebApi\obj\Debug\net7.0\HS-TopStyleWebApi.genruntimeconfig.cache
 C:\Users\helen\source\repos\SQLrepos\HS-TopStyleWebApi\HS-TopStyleWebApi\obj\Debug\net7.0\ref\HS-TopStyleWebApi.dll
+C:\Users\helen\source\repos\SQLrepos\HS-TopStyleWebApi\HS-TopStyleWebApi\bin\Debug\net7.0\Scrutor.dll
+C:\Users\helen\source\repos\SQLrepos\HS-TopStyleWebApi\HS-TopStyleWebApi\bin\Debug\net7.0\Swashbuckle.AspNetCore.Filters.dll
+C:\Users\helen\source\repos\SQLrepos\HS-TopStyleWebApi\HS-TopStyleWebApi\bin\Debug\net7.0\Swashbuckle.AspNetCore.Filters.Abstractions.dll
