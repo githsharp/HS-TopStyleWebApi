@@ -66,6 +66,28 @@ namespace HS_TopStyleWebApi.Repos.Migrations
                     b.ToTable("Orders");
                 });
 
+            modelBuilder.Entity("HS_TopStyleWebApi.Repos.Entities.OrderItem", b =>
+                {
+                    b.Property<int>("OrderItemId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderItemId"));
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.HasKey("OrderItemId");
+
+                    b.ToTable("OrderItems");
+                });
+
             modelBuilder.Entity("HS_TopStyleWebApi.Repos.Entities.Product", b =>
                 {
                     b.Property<int>("ProductId")

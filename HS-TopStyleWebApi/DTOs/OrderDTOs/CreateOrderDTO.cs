@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using HS_TopStyleWebApi.Repos.Entities;
 
 namespace HS_TopStyleWebApi.DTOs.OrderDTOs
 {

@@ -1,26 +1,37 @@
 using HS_TopStyleWebApi.Repos.Entities;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using System.Text;
-using System.Threading.Tasks;
-using System.Threading;
-using Microsoft.OpenApi.Models;
-using Microsoft.AspNetCore.Mvc;
+using System.Data.SqlClient;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.Options;
-using Swashbuckle.AspNetCore.Filters;
-using Microsoft.Extensions.Configuration;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using HS_TopStyleWebApi.Repos;
-using System.Collections.Generic;
-using HS_TopStyleWebApi.Controllers;
-using HS_TopStyleWebApi.Extensions;
+using HS_TopStyleWebApi.Repository.Repos;
+//using HS_TopStyleWebApi.Extensions;
 using HS_TopStyleWebApi.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using HS_TopStyleWebApi.Services.Authentication;
+using HS_TopStyleWebApi.Repository.Interfaces;
+using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.Filters;
+using Microsoft.Extensions.Configuration;
+using HS_TopStyleWebApi.DTOs.OrderDTOs;
+using HS_TopStyleWebApi.DTOs.ProductDTOs;
+using HS_TopStyleWebApi.DTOs.UserDTOs;
+using HS_TopStyleWebApi.Services;
+using HS_TopStyleWebApi.Repos;
+using Microsoft.Extensions.DependencyInjection;
+using System.Threading.Tasks;
+using System.Threading;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using System.Collections.Generic;
+using HS_TopStyleWebApi.Controllers;
+using Azure.Identity;
+using Azure.Extensions.AspNetCore.Configuration.Secrets;
+using Azure.Security.KeyVault.Secrets;
+using Microsoft.Extensions.Configuration.AzureKeyVault;
 
 namespace HS_TopStyleWebApi
 {
@@ -39,55 +50,123 @@ namespace HS_TopStyleWebApi
                     options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
                     options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
                 });
-            builder.Services.AddControllers();
-            builder.Services.AddEndpointsApiExplorer();
 
-            // *** HÄR SKA IUSERREPOSITORY, USERREPOSITORY OCH IORDERREPOSITORY, ORDERREPOSITORY OSV LÄGGAS TILL ***
+            builder.Services.AddEndpointsApiExplorer();
+            builder.Services.AddSwaggerGen();
+            builder.Services.AddTransient<IProductRepository, ProductRepository>();
+            builder.Services.AddTransient<IOrderRepository, OrderRepository>();
+            builder.Services.AddTransient<IUserRepository, UserRepository>();
+            //builder.Services.AddTransient<IOrderItemRepository, OrderItemRepository>();
+            builder.Services.AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>();
             builder.Services.AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>();
 
-            builder.Services.AddDbContext<ProductContext>(
-                options => options.UseSqlServer(@"Data Source=localhost;Initial Catalog=TopStyle;Integrated Security=SSPI;TrustServerCertificate=True;")
-                );
+            //builder.Services.AddDbContext<ProductContext>(
+            //    options => options.UseSqlServer(@"Data Source=localhost;Initial Catalog=TopStyle;Integrated Security=SSPI;TrustServerCertificate=True;")
+            //    // I DEMON: 
+            //    //options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+            //    );
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-
-            builder.Services.AddSwaggerExtended();
-
-            //builder.Services.AddSwaggerGen(options =>
-            //{
-            //    // generell konfig av Swagger
-
-            //    options.SwaggerDoc("v1", new OpenApiInfo
-            //    {
-            //        Title = "HS_TopStyleWebApi extension method",
-            //        Version = "v1"
-            //    });
-            //});
 
             var jwtSettings = new JwtSettings();
             builder.Services.AddSingleton(Options.Create(jwtSettings));
             builder.Configuration.Bind(JwtSettings.SectionName, jwtSettings);
 
+            builder.Services.AddAuthentication(opt =>
+            {
+                opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            });
+
             builder.Services.AddAuthentication(defaultScheme: JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(options =>
+                .AddJwtBearer(options => options.TokenValidationParameters = new TokenValidationParameters()
                 {
-                    options.TokenValidationParameters = new TokenValidationParameters()
-                    {
-                        ValidateIssuer = true,
-                        ValidateAudience = true,
-                        ValidateLifetime = true,
-                        ValidateIssuerSigningKey = true,
-                        ValidIssuer = jwtSettings.Issuer,
-                        ValidAudience = jwtSettings.Audience,
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.SecretKey))
-                    };
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    //ValidIssuer = jwtSettings.Issuer,
+                    ValidIssuer = "http://localhost:5111/",
+                    //ValidAudience = jwtSettings.Audience,
+                    ValidAudience = "http://localhost:5111/",
+                    //IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.SecretKey))
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("mysecretKey12345!#"))
                 });
+
+            builder.Services.AddSwaggerGen(options =>
+            {
+                options.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
+                {
+                    Description = "Skriv in bearer för att kunna anropa api:et.. Exempel: \"bearer {token}\"",
+                    In = ParameterLocation.Header,
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.ApiKey
+
+                });
+
+                options.OperationFilter<SecurityRequirementsOperationFilter>();
+
+            });
+
+            if (builder.Environment.IsProduction())
+            {
+                var keyVaultURL = builder.Configuration.GetSection("KeyVault:KeyVaultURL");
+                var keyVaultClientId = builder.Configuration.GetSection("KeyVault:ClientId");
+                var keyVaultClientSecret = builder.Configuration.GetSection("KeyVault:ClientSecret");
+                var keyVaultDirectoryID = builder.Configuration.GetSection("KeyVault:DirectoryID");
+
+                var credential = new ClientSecretCredential(keyVaultDirectoryID.Value!.ToString(), keyVaultClientId.Value!.ToString(), keyVaultClientSecret.Value!.ToString());
+
+                builder.Configuration.AddAzureKeyVault(keyVaultURL.Value!.ToString(), keyVaultClientId.Value!.ToString(), keyVaultClientSecret.Value!.ToString(), new DefaultKeyVaultSecretManager());
+
+                var client = new SecretClient(new Uri(keyVaultURL.Value!.ToString()), credential);
+
+                builder.Services.AddDbContext<ProductContext>(options =>
+                {
+                    options.UseSqlServer(client.GetSecret("ProdConnection").Value.Value.ToString());
+                });
+
+            }
+
+            //if (builder.Environment.IsDevelopment())
+            //{
+            //    builder.Services.AddDbContext<ProductContext>(options =>
+            //    {
+            //        options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+            //    });
+            //}
+
+            if (builder.Environment.IsDevelopment())
+            {
+                builder.Services.AddDbContext<ProductContext>(
+                        options => options.UseSqlServer(@"Server=tcp:kv-hstopstylewebapi.vault.azure.net,1433;Initial Catalog=HSTopStyleWebApi;Persist Security Info=False;User ID=hsazure22;Password=Hstopstyle22;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;")
+                 );
+            }
+
+
+            // *** Eventuellt ska denna kod tas med ***
+            ////Options.AddSecurityRequirement(new OpenApiSecurityRequirement
+            ////{
+            ////    {
+            ////        new OpenApiSecurityScheme
+            ////        {
+            ////            Reference = new OpenApiReference
+            ////            {
+            ////                    Type = ReferenceType.SecurityScheme,
+            ////                    Id = "bearer"
+            ////                }
+            ////        },
+            //// //       new List<string>()
+            //////        // Mitt alternativ från Recipe
+            ////        Array.Empty<string>()
+            ////   }
+            ////});
 
             builder.Services.AddCors(opt =>
             {
                 opt.AddPolicy(name: "CorsPolicy", builder =>
                 {
-                    builder.WithOrigins("http://localhost:5093")
+                    builder.WithOrigins("http://localhost:5111")
                         .AllowAnyHeader()
                         .AllowAnyMethod()
                         .AllowCredentials();
@@ -100,24 +179,46 @@ namespace HS_TopStyleWebApi
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
-                app.UseSwaggerUI();
+                app.UseSwaggerUI(endpoint =>
+                {
+                    endpoint.SwaggerEndpoint("/swagger/v1/swagger.json", "HS-TopStyleWebApi v1");
+                });
+
+                //app.UseSwagger();
+                //app.UseSwaggerUI();
+                //app.UseSwaggerUI(endpoint =>
+                //{
+                //    endpoint.SwaggerEndpoint("/swagger/v1/swagger.json", "HS-TopStyleWebApi v1");
+                //});
+
+                app.UseHttpsRedirection();
+                app.UseRouting();
+                //app.UseSwagger();
+                //app.UseSwaggerUI(endpoint =>
+                //{
+                //    endpoint.SwaggerEndpoint("/swagger/v1/swagger.json", "HS-TopStyleWebApi v1");
+                //});
+                app.UseAuthentication();
+                app.UseAuthorization();
+                /*app.MapControllers()*/
+                ;
+                app.UseEndpoints(endpoints =>
+                {
+                    endpoints.MapControllers();
+                });
+
+                app.Run();
             }
-
-            //app.UseAuthorization();
-
-            app.UseRouting();
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-            }); 
-
-            app.Run();
         }
     }
 }
 
 //Detta kommando lägger en migration i en speciell mapp som vi styr 
 //add-migration createHS-TopStyle -o Repos\Migrations
+//add-migration update-o Repos\Migrations
 
 //Att uppdatera eller skapa en databas utifrån en migration
+//update-database
+
+//add-migration updateHS-TopStyle -o Repos\Migrations
 //update-database

@@ -21,7 +21,7 @@ namespace HS_TopStyleWebApi.Repository.Interfaces
         Task<List<GetOrderDTO>> GetOrderById(int id);
 
         // DELETE - Delete Order by Id
-        Task<OrderDTO?> DeleteOrder(int id);
+       // Task<OrderDTO> DeleteOrder(int id);
         //alt denna:
         //Task<Boolean> DeleteOrder(int orderId);
     }

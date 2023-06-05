@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
-using HS_TopStyleWebApi.Extensions;
+//using HS_TopStyleWebApi.Extensions;
 using HS_TopStyleWebApi.Repository.Interfaces;
 using HS_TopStyleWebApi.Repository.Repos;
 using HS_TopStyleWebApi.DTOs.UserDTOs;
@@ -13,16 +13,22 @@ namespace HS_TopStyleWebApi.Repository.Repos
 {
     public class UserRepository : IUserRepository
     {
-        private readonly IConfiguration _configuration;
-        private readonly ProductContext _context;
-
-        public UserRepository(IConfiguration configuration, ProductContext context)
+        // sätts upp via Dependency Injection för att kunna läsa från databasen
+        private readonly ProductContext _db;
+        public UserRepository(ProductContext db)
         {
-            _configuration = configuration;
-            _context = context;
-            //alt:
-            //_db = db;
+            _db = db;
         }
+
+        //private readonly IConfiguration _configuration;
+        //private readonly ProductContext _context;
+
+        //public UserRepository(IConfiguration configuration, ProductContext context)
+        //{
+        //    _configuration = configuration;
+        //    _context = context;
+        //    //_db = db;
+        //}
 
         // POST - Register User
         public async Task<int> RegisterUser(RegisterDTO user)
@@ -33,16 +39,18 @@ namespace HS_TopStyleWebApi.Repository.Repos
                 Email = user.Email,
                 Password = user.Password,
 
-            }; await _context.SaveChangesAsync();
+            }; await _db.SaveChangesAsync();
             return newUser.UserId;
         }
 
+        //POST - Login User
         public async Task<User?> LoginUser(LoginDTO loginDTO)
         {
             //using var db = new ProductContext();
             // hur avsluta ProductContext?
-
-            var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == loginDTO.Email && u.Password == loginDTO.Password);
+            
+            // här ska db vara istf _context
+            var user = await _db.Users.FirstOrDefaultAsync(u => u.FullName == loginDTO.FullName && u.Password == loginDTO.Password);
             //var user = await db.Users.FirstOrDefaultAsync(u => u.Email == loginDTO.Email && u.Password == loginDTO.Password);
             return user;
         }

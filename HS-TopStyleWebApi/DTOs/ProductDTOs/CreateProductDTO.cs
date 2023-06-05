@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using HS_TopStyleWebApi.Repos.Entities;
 
 namespace HS_TopStyleWebApi.DTOs.ProductDTOs
 {
@@ -14,7 +15,6 @@ namespace HS_TopStyleWebApi.DTOs.ProductDTOs
         [Required]
         public int Price { get; set; } = 0;
         [Required]
-        public string Category { get; set; } = null!;
-        public object? CategoryName { get; internal set; }
+        public int CategoryId { get; set; } = 0;
     }
 }

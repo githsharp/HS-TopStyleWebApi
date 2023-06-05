@@ -22,8 +22,6 @@ namespace HS_TopStyleWebApi.Repos.Entities
         public virtual Category? Categories { get; set; }
         // varje produkt kan finnas i flera ordrar
         public virtual ICollection <Order>? Orders { get; set; }
-        public object? CategoryName { get; internal set; }
-
         public Product()
         {
         }   
