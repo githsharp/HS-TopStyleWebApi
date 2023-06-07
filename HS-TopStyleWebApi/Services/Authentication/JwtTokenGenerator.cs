@@ -29,20 +29,7 @@ namespace HS_TopStyleWebApi.Services.Authentication
 
             var claims = new List<Claim>
             {
-                // new claim for email
                 new Claim(JwtRegisteredClaimNames.Email, user.Email),
-                // new claim for username
-                //new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
-                // new claim for role
-                //new Claim(JwtRegisteredClaimNames.Jti, user.Role),
-                // new claim for id
-                //new Claim(JwtRegisteredClaimNames.Jti, user.UserId.ToString()),
-            //new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-            // new claim for UserId
-            //new Claim("UserId", user.UserId.ToString()),
-            // eller så här:
-            //new Claim(JwtRegisteredClaimNames.Jti, UserId.NewUserId.ToString()),
-            //new Claim(JwtRegisteredClaimNames.Jti, UserId.NewUserId().ToString()),
             };
 
             var securityToken = new JwtSecurityToken(
@@ -54,6 +41,24 @@ namespace HS_TopStyleWebApi.Services.Authentication
 
             return new JwtSecurityTokenHandler().WriteToken(securityToken);
 
+        }
+        public string GenerateToken2(User user)
+        {
+            var newSecretKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("MySuperSecretKey123@@444?!MySecretKey"));
+            var signingCredentials = new SigningCredentials(newSecretKey, SecurityAlgorithms.HmacSha256);
+            var claims = new[]
+            {
+                new Claim(ClaimTypes.Email, user.Email),
+            };
+
+            var securityToken = new JwtSecurityToken(
+                issuer: "https://localhost:5111",
+                audience: "https://localhost:5111",
+                expires: DateTime.Now.AddMinutes(30),
+                claims: claims,
+                signingCredentials: signingCredentials);
+             
+            return new JwtSecurityTokenHandler().WriteToken(securityToken).ToString();
         }
     }
 }

@@ -13,5 +13,8 @@ namespace HS_TopStyleWebApi.DTOs.UserDTOs
 
         [Required]
         public string Password { get; set; } = null!;
+
+        public string Gender { get; set; } = null!;
+
     }
 }

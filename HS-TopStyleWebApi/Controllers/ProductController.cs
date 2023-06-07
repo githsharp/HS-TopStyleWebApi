@@ -11,26 +11,20 @@ namespace HS_TopStyleWebApi.Controllers
     [ApiController]
     public class ProductController : ControllerBase
     {
-        //private readonly IProductRepository _productRepository;
-        //private readonly IOrderRepository _orderRepository;
-        //private readonly IUserRepository _userRepository;
-        //private readonly IJwtTokenGenerator _jwtTokenGenerator;
-
-        //public ProductController(IProductRepository productRepository, IJwtTokenGenerator jwtTokenGenerator) 
-        //{
-        //    _productRepository = productRepository;
-        //    _jwtTokenGenerator = jwtTokenGenerator;
-        //    /_userRepository = userRepository;
-        //    _orderRepository = orderRepository;
-        //}
-
         //Sätts upp via Dependency Injection för att kunna läsa från databasen
 
         private readonly ProductContext _db;
-        public ProductController(ProductContext db)
+        private readonly IProductRepository _productRepository;
+        private readonly IOrderRepository _orderRepository;
+        private readonly IUserRepository _userRepository;
+
+        public ProductController(ProductContext db, IProductRepository productRepository, IOrderRepository orderRepository, IUserRepository userRepository)
         {
             _db = db;
-        }
+            _productRepository = productRepository;
+            _orderRepository = orderRepository;
+            _userRepository = userRepository;
+         }
 
         // denna ska egentligen bort!
         //[Authorize]
@@ -78,7 +72,6 @@ namespace HS_TopStyleWebApi.Controllers
             var products = _db.Products.Where(p => p.ProductName == ProductName);
             return Ok(products);
         }
-
 
     }
 }

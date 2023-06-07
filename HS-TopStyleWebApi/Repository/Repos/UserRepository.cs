@@ -20,52 +20,28 @@ namespace HS_TopStyleWebApi.Repository.Repos
             _db = db;
         }
 
-        //private readonly IConfiguration _configuration;
-        //private readonly ProductContext _context;
+        // POST - Register user
 
-        //public UserRepository(IConfiguration configuration, ProductContext db)
-        //{
-        //    _configuration = configuration;
-        //    _db = db;
-        //    //_db = db;
-        //}
-
-        // POST - Register user - using linq and lambda and async task with RegisterDTO
-
-        public async Task<int> RegisterUser(RegisterDTO user)
+        public async Task<User> RegisterUser(RegisterDTO user)
         {
             var newUser = new User
             {
                 FullName = user.FullName,
                 Email = user.Email,
                 Password = user.Password,
+                Gender = user.Gender,
 
-            }; await _db.SaveChangesAsync();
-            return newUser.UserId;
+            }; 
+            await _db.Users.AddAsync(newUser);
+            await _db.SaveChangesAsync();
+            var createdUser = await _db.Users.SingleOrDefaultAsync(u => u.UserId == newUser.UserId);
+            return createdUser;
         }   
-
-
-        //public async Task<int> RegisterUser(RegisterDTO user)
-        //{
-        //    var newUser = new User
-        //    {
-        //        FullName = user.FullName,
-        //        Email = user.Email,
-        //        Password = user.Password,
-
-        //    }; await _db.SaveChangesAsync();
-        //    return newUser.UserId;
-        //}
 
         //POST - Login User
         public async Task<User?> LoginUser(LoginDTO loginDTO)
         {
-            //using var db = new ProductContext();
-            // hur avsluta ProductContext?
-            
-            // här ska db vara istf _context
             var user = await _db.Users.FirstOrDefaultAsync(u => u.FullName == loginDTO.FullName && u.Password == loginDTO.Password);
-            //var user = await db.Users.FirstOrDefaultAsync(u => u.Email == loginDTO.Email && u.Password == loginDTO.Password);
             return user;
         }
     }

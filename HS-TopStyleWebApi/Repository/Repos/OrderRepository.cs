@@ -5,7 +5,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
-//using HS_TopStyleWebApi.Extensions;
 using HS_TopStyleWebApi.DTOs.OrderDTOs;
 using System.Linq;
 
@@ -21,34 +20,34 @@ namespace HS_TopStyleWebApi.Repository.Repos
             _db = db;
         }
 
-        //private readonly string _connectionString;
-        //private readonly IJwtTokenGenerator _jwtTokenGenerator;
-        //private readonly IConfiguration _configuration;
-        //private readonly ProductContext _context;
-
-        // är ovan samma som nedan?
-        //public OrderRepository(IConfiguration configuration, ProductContext context)
-        //{
-        //    _configuration = configuration;
-        //    _context = context;
-        //}
-
         // Create order
-        public async Task<int> CreateOrder(CreateOrderDTO order)
+        public async Task<Order> CreateOrder(CreateOrderDTO order)
         {
             var newOrder = new Order
             {
-                OrderId = order.OrderId,
                 UserId = order.UserId,
                 ProductId = order.ProductId,
                 Quantity = order.Quantity,
                 TotalSum = order.TotalSum,
             };
 
-            //await DbContext.Order.AddAsync(newOrder);
             await _db.Orders.AddAsync(newOrder);
             await _db.SaveChangesAsync();
-            return newOrder.OrderId;
+            var createdOrder = await _db.Orders.SingleOrDefaultAsync(o => o.OrderId == newOrder.OrderId);
+            return createdOrder;
+        }
+
+        // get all orders
+        public async Task<List<OrderDTO>> GetOrder(OrderDTO order)
+        {
+            return await _db.Orders.Select(o => new OrderDTO
+            {
+                OrderId = o.OrderId,
+                UserId = o.UserId,
+                ProductId = o.ProductId,
+                Quantity = o.Quantity,
+                TotalSum = o.TotalSum,
+            }).ToListAsync();
         }
 
         // Get order by id and return a list of orders
@@ -86,7 +85,7 @@ namespace HS_TopStyleWebApi.Repository.Repos
 //    //    return null;
 //    //}
 
-//    _context.Orders.Remove(order);
+//    _db.Orders.Remove(order);
 //    await _db.SaveChangesAsync();
 //    // return a value from the method of deleting an order matching the OrderDTO:
 

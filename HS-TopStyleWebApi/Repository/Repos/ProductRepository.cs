@@ -19,11 +19,6 @@ namespace HS_TopStyleWebApi.Repository.Repos
 {
     public class ProductRepository : IProductRepository
     {
-        //private readonly string _connectionString;
-        //private readonly IJwtTokenGenerator _jwtTokenGenerator;
-        //private readonly IConfiguration _configuration;
-        //private readonly ProductContext _context;
-        //private readonly string _connectionString;
 
         private readonly ProductContext _db;
         public ProductRepository(ProductContext db)
@@ -31,40 +26,8 @@ namespace HS_TopStyleWebApi.Repository.Repos
             _db = db;
         }
 
-        // är ovan samma som nedan?
-        //public ProductRepository(IConfiguration configuration, ProductContext db)
-        //{
-        //    //_configuration = configuration;
-        //    //_db = db;
-        //    //_db = db;
-        //    _connectionString = connectionString.GetConnectionString("Default");
-        //}
-
-        // Create product
-        //public async Task<int> CreateProduct(CreateProductDTO product)
-        //{
-        //    var newProduct = new Product
-        //    {
-        //        ProductId = product.ProductId,
-        //        ProductName = product.ProductName,
-        //        Description = product.Description,
-        //        Price = product.Price,
-        //        CategoryId = product.CategoryId,
-
-        //    };
-        //    _db.Products.Add(newProduct);
-        //    await _db.SaveChangesAsync();
-
-        //    return product.ProductId;
-        //}
-
-
-        //var officeList = _db.Offices.ToList();
-
         public async Task<List<ProductDTO>> GetProduct(ProductDTO product)
         {
-            // add return of list with await
-
             return await _db.Products.Select(p => new ProductDTO
             {
                 ProductId = p.ProductId,
@@ -74,9 +37,8 @@ namespace HS_TopStyleWebApi.Repository.Repos
                 CategoryId = p.CategoryId,
             }).ToListAsync();
             
-            //return new List<ProductDTO>();
         }
-        //getProducgtByCategory
+        //getProductByCategory
         public async Task<List<ProductDTO>> GetProductByCategory(int categoryId)
         {
             return await _db.Products.Where(p => p.CategoryId == categoryId).Select(p => new ProductDTO
@@ -127,43 +89,3 @@ namespace HS_TopStyleWebApi.Repository.Repos
         }
     }
 }
-
-//    /// ************************
-
-//    {
-//        new ProductDTO
-//        {
-//        ProductId = product.ProductId,
-//        ProductName = product.ProductName,
-//        Description = product.Description,
-//        Price = product.Price,
-//        CategoryName = product.CategoryName,
-//        }
-//    };
-//}  
-
-
-//await _db.Products.ToListAsync();
-//return _db.Products.Select(p => new ProductDTO
-//{
-//    ProductId = p.ProductId,
-//    ProductName = p.ProductName,
-//    Description = p.Description,
-//    Price = p.Price,
-//    CategoryName = p.CategoryName,
-//}); 
-
-
-//        var employeesWithOffice = _db.Employees
-//           .Include(e => e.Office)
-//           .ToList();
-//var products = await _db.Products.ToListAsync();
-
-//return products.Select(p => new ProductDTO
-//{
-//    ProductId = p.ProductId,
-//    ProductName = p.ProductName,
-//    Description = p.Description,
-//    Price = p.Price,
-//    CategoryId = p.CategoryId,
-//});

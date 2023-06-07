@@ -44,13 +44,13 @@ namespace HS_TopStyleWebApi
 
             // Add services to the container.
 
-            builder.Services.AddControllers();
-            //    .AddJsonOptions(options =>
-            //{
-            //    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
-            //    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
-            //    options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
-            //});
+            builder.Services.AddControllers()
+                .AddJsonOptions(options =>
+            {
+                options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
+                options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+                options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+            });
 
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
@@ -59,8 +59,7 @@ namespace HS_TopStyleWebApi
             builder.Services.AddTransient<IOrderRepository, OrderRepository>();
             builder.Services.AddTransient<IUserRepository, UserRepository>();
             //builder.Services.AddTransient<IOrderItemRepository, OrderItemRepository>();
-            //builder.Services.AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>();
-            //builder.Services.AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>();
+            builder.Services.AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>();
 
 
             builder.Services.AddDbContext<ProductContext>(options => options.UseSqlServer
@@ -71,38 +70,7 @@ namespace HS_TopStyleWebApi
                 .AddEntityFrameworkStores<ProductContext>()
                 .AddDefaultTokenProviders();
 
-            //builder.Services.AddTransient<IProductRepository, ProductRepository>();
-            //builder.Services.AddTransient<IOrderRepository, OrderRepository>();
-            //builder.Services.AddTransient<IUserRepository, UserRepository>();
-            ////builder.Services.AddTransient<IOrderItemRepository, OrderItemRepository>();
-
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-
-
-            //var jwtSettings = new JwtSettings();
-            //builder.Services.AddSingleton(Options.Create(jwtSettings));
-            //builder.Configuration.Bind(JwtSettings.SectionName, jwtSettings);
-
-            //builder.Services.AddAuthentication(opt =>
-            //{
-            //    opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-            //    opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            //});
-
-            //builder.Services.AddAuthentication(defaultScheme: JwtBearerDefaults.AuthenticationScheme)
-            //    .AddJwtBearer(options => options.TokenValidationParameters = new TokenValidationParameters()
-            //    {
-            //        ValidateIssuer = true,
-            //        ValidateAudience = true,
-            //        ValidateLifetime = true,
-            //        ValidateIssuerSigningKey = true,
-            //        //ValidIssuer = jwtSettings.Issuer,
-            //        ValidIssuer = "http://localhost:5111/",
-            //        //ValidAudience = jwtSettings.Audience,
-            //        ValidAudience = "http://localhost:5111/",
-            //        //IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.SecretKey))
-            //        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("mysecretKey12345!#"))
-            //    });
 
             builder.Services.AddSwaggerGen(options =>
             {

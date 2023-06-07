@@ -5,18 +5,11 @@ namespace HS_TopStyleWebApi.DTOs.OrderDTOs
 {
     public class CreateOrderDTO
     {
-        [Required]
-        public int OrderId { get; set; }
-
-        [Required]
+        // har plockat bort alla Required för att kunna söka på enbart en av dessa properties
+        //public int OrderId { get; set; }
         public int UserId { get; set; }
-
-        [Required]
         public int ProductId { get; set; }
-        [Required]
         public int Quantity { get; set; }
-
-        [Required]
         public int TotalSum { get; set; }
     }
 }

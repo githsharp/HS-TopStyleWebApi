@@ -24,17 +24,17 @@ namespace HS_TopStyleWebApi.Repos.Entities
         //varje användare kan ha flera ordrar
         public virtual ICollection <Order>? Orders { get; set; }
 
-       public User(int userId, string fullName, string email, string password)
-        {
-            UserId = userId;
-            FullName = fullName;
-            Email = email;
-            Password = password;
-            Gender = Gender;
-        }
+       //public User(int userId, string fullName, string email, string password)
+       // {
+       //     UserId = userId;
+       //     FullName = fullName;
+       //     Email = email;
+       //     Password = password;
+       //     Gender = Gender;
+       // }
 
-        public User()
-        {
-        }
+       // public User()
+       // {
+       // }
     }
 }

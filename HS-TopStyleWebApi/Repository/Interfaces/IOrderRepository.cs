@@ -10,18 +10,18 @@ namespace HS_TopStyleWebApi.Repository.Interfaces
     public interface IOrderRepository
     {
         // POST - Create Order
-        Task<int> CreateOrder(CreateOrderDTO order);
+        Task<Order> CreateOrder(CreateOrderDTO order);
         //alt denna:
         //Task<int> CreateOrder(CreateOrderDTO order);
 
         // GET - Get Order by Id
-        //Task<OrderDTO?> GetOrderById(int id);
-        //alt denna:
-        //Task<List<SearchOrderDTO>> GetOrder();
-        Task<List<GetOrderDTO>> GetOrderById(int id);
+        //Task<List<GetOrderDTO>> GetOrderById(int id);
+
+        // GET - Get all orders
+        Task<List<OrderDTO>> GetOrder(OrderDTO order);
 
         // DELETE - Delete Order by Id
-       // Task<OrderDTO> DeleteOrder(int id);
+        // Task<OrderDTO> DeleteOrder(int id);
         //alt denna:
         //Task<Boolean> DeleteOrder(int orderId);
     }

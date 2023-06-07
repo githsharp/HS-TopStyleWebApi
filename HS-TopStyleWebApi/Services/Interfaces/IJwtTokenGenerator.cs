@@ -4,6 +4,7 @@ namespace HS_TopStyleWebApi.Services.Interfaces
 {
     public interface IJwtTokenGenerator
     {
-        string GenerateToken(User user);
+        public string GenerateToken(User user);
+        public string GenerateToken2(User user);
     }
 }
