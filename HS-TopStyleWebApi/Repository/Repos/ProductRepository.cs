@@ -25,17 +25,17 @@ namespace HS_TopStyleWebApi.Repository.Repos
         //private readonly ProductContext _context;
         //private readonly string _connectionString;
 
-        private readonly ProductContext _context;
-        public ProductRepository(ProductContext context)
+        private readonly ProductContext _db;
+        public ProductRepository(ProductContext db)
         {
-            _context = context;
+            _db = db;
         }
 
         // är ovan samma som nedan?
-        //public ProductRepository(IConfiguration configuration, ProductContext context)
+        //public ProductRepository(IConfiguration configuration, ProductContext db)
         //{
         //    //_configuration = configuration;
-        //    //_context = context;
+        //    //_db = db;
         //    //_db = db;
         //    _connectionString = connectionString.GetConnectionString("Default");
         //}
@@ -52,8 +52,8 @@ namespace HS_TopStyleWebApi.Repository.Repos
         //        CategoryId = product.CategoryId,
 
         //    };
-        //    _context.Products.Add(newProduct);
-        //    await _context.SaveChangesAsync();
+        //    _db.Products.Add(newProduct);
+        //    await _db.SaveChangesAsync();
 
         //    return product.ProductId;
         //}
@@ -65,7 +65,7 @@ namespace HS_TopStyleWebApi.Repository.Repos
         {
             // add return of list with await
 
-            return await _context.Products.Select(p => new ProductDTO
+            return await _db.Products.Select(p => new ProductDTO
             {
                 ProductId = p.ProductId,
                 ProductName = p.ProductName,
@@ -79,7 +79,7 @@ namespace HS_TopStyleWebApi.Repository.Repos
         //getProducgtByCategory
         public async Task<List<ProductDTO>> GetProductByCategory(int categoryId)
         {
-            return await _context.Products.Where(p => p.CategoryId == categoryId).Select(p => new ProductDTO
+            return await _db.Products.Where(p => p.CategoryId == categoryId).Select(p => new ProductDTO
             {
                 ProductId = p.ProductId,
                 ProductName = p.ProductName,
@@ -91,7 +91,7 @@ namespace HS_TopStyleWebApi.Repository.Repos
         //getProductByPrice
         public async Task<List<ProductDTO>> GetProductByPrice(int price)
         {
-            return await _context.Products.Where(p => p.Price == price).Select(p => new ProductDTO
+            return await _db.Products.Where(p => p.Price == price).Select(p => new ProductDTO
             {
                 ProductId = p.ProductId,
                 ProductName = p.ProductName,
@@ -103,7 +103,7 @@ namespace HS_TopStyleWebApi.Repository.Repos
         // get ProductById
         public async Task<ProductDTO?> GetProductById(int id)
         {
-            return await _context.Products.Where(p => p.ProductId == id).Select(p => new ProductDTO
+            return await _db.Products.Where(p => p.ProductId == id).Select(p => new ProductDTO
             {
                 ProductId = p.ProductId,
                 ProductName = p.ProductName,
@@ -116,7 +116,7 @@ namespace HS_TopStyleWebApi.Repository.Repos
         // get ProductByName
         public async Task<ProductDTO?> GetProductByName(string name)
         {
-            return await _context.Products.Where(p => p.ProductName == name).Select(p => new ProductDTO
+            return await _db.Products.Where(p => p.ProductName == name).Select(p => new ProductDTO
             {
                 ProductId = p.ProductId,
                 ProductName = p.ProductName,
@@ -143,8 +143,8 @@ namespace HS_TopStyleWebApi.Repository.Repos
 //}  
 
 
-//await _context.Products.ToListAsync();
-//return _context.Products.Select(p => new ProductDTO
+//await _db.Products.ToListAsync();
+//return _db.Products.Select(p => new ProductDTO
 //{
 //    ProductId = p.ProductId,
 //    ProductName = p.ProductName,
@@ -157,7 +157,7 @@ namespace HS_TopStyleWebApi.Repository.Repos
 //        var employeesWithOffice = _db.Employees
 //           .Include(e => e.Office)
 //           .ToList();
-//var products = await _context.Products.ToListAsync();
+//var products = await _db.Products.ToListAsync();
 
 //return products.Select(p => new ProductDTO
 //{

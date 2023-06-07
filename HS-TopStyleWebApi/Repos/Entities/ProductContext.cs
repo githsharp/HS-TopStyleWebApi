@@ -13,6 +13,9 @@ namespace HS_TopStyleWebApi.Repos.Entities
         {
         }
 
+        protected override void OnModelCreating(ModelBuilder builder)
+        { base.OnModelCreating(builder); }
+
         //Detta är mappningen mellan de entitetsklasser som finns och databasen
 
         public virtual DbSet<Product> Products { get; set; }

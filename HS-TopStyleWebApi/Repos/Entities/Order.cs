@@ -20,7 +20,15 @@ namespace HS_TopStyleWebApi.Repos.Entities
 
         public Order()
         {
-        }   
+        }
 
+        //public Order(int orderId, int userId, int productId, int quantity, int totalSum)
+        //{
+        //    OrderId = orderId;
+        //    UserId = userId;
+        //    ProductId = productId;
+        //    Quantity = quantity;
+        //    TotalSum = totalSum;
+        //}
     }
 }

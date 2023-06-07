@@ -22,8 +22,14 @@ namespace HS_TopStyleWebApi.Repos.Entities
         public virtual Category? Categories { get; set; }
         // varje produkt kan finnas i flera ordrar
         public virtual ICollection <Order>? Orders { get; set; }
-        public Product()
+
+        public Product (int productId, string productName, string description, int price, int categoryId)
         {
-        }   
+            ProductId = productId;
+            ProductName = productName;
+            Description = description;
+            Price = price;
+            CategoryId = categoryId;
+        }
     }
 }

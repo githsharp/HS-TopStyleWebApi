@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using HS_TopStyleWebApi.Services.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 
 namespace HS_TopStyleWebApi.Controllers
 {
@@ -16,6 +17,75 @@ namespace HS_TopStyleWebApi.Controllers
     [ApiController]
     public class AuthenticationController : ControllerBase
     {
+        private readonly UserManager<User> _usermanager;
+        private readonly SignInManager<User> _signinmanager;
+
+        // Vi injectar de delar av Identity som ska användas.
+        // // här tex usermanager och signinmanager
+        public AuthenticationController(UserManager<User> usermanager, SignInManager<User> signinmanager)
+        {
+            _usermanager = usermanager;
+            _signinmanager = signinmanager;
+        }
+
+        // Register a user
+        //[HttpPost("{user}")]
+        //[Route("api/[action]")]
+        //[Route("api/register")]
+        [HttpPost("register")]
+        public async Task<IActionResult> Register(UserDTO user)
+        {
+            //if (user is null) return BadRequest("Felaktig användare");
+
+            // skapar en ny användare
+            var newUser = new User()
+            {
+                FullName = user.FullName,
+                Email = user.Email,
+                Gender = user.Gender,
+            };
+
+            // sparar ner användaren i databasen
+            var result = await _usermanager.CreateAsync(newUser, user.Password);
+
+            if (result.Succeeded)
+            {
+                return Ok("Användaren skapad");
+            }
+            else
+            {
+                return BadRequest("Någonting gick fel. Vänligen försök igen.");
+            }
+        }
+
+        // Login a user
+
+        [HttpPost("login")]
+
+        public async Task<IActionResult> Login(UserDTO user)
+        {
+            //testar vår inloggning och får tillbaka ett resultat
+            var result = await _signinmanager.PasswordSignInAsync(user.FullName, user.Password, false, false);
+
+            if (result.Succeeded)
+            {
+                //normala steg här är att först hämta claims/roles och sedan skapa en JWT
+                // token som skickas tillbaka till klienten
+
+                return Ok("Inloggningen gick bra. Här skickas en token med tillbaka");
+            }
+
+            else
+            {
+                return Unauthorized("Felaktig inloggning. Vänligen försök igen");
+            }
+
+        }
+
+
+
+
+        /*
 
         private readonly IUserRepository _userRepository;
         private readonly IJwtTokenGenerator _jwtTokenGenerator;
@@ -27,22 +97,38 @@ namespace HS_TopStyleWebApi.Controllers
         //    _jwtTokenGenerator = jwtTokenGenerator;
         //}
 
-        private readonly ProductContext _db;
+        private readonly ProductContext? _db;
 
         public AuthenticationController(ProductContext db)
         {
             _db = db;
-            //_context = context;
         }
 
         // [AllowAnonymous]
         //register a user
         [HttpPost("register")]
-        //public IActionResult RegisterUser(RegisterDTO user, User newUser)
-        public IActionResult RegisterUser(RegisterDTO user)
+        public async Task <IActionResult> RegisterUser(RegisterDTO user)
         {
-            var userInDb = _db.Users.FirstOrDefault(u => u.Email == user.Email);
-            return Ok("A new user is successfully created {newUser}");
+            //var userInDb = await _db.Users.FirstOrDefaultAsync(u => u.Email == user.Email);
+            var userInDb = await _db.Users.FirstOrDefaultAsync(u => u.Email == user.Email);
+            _db.SaveChanges();
+            return Ok(user);
+            //_db.Users.Add(_db.Users.FirstOrDefault(u => u.Email == user.Email));
+
+            //var user = await _db.RegisterUser(user);
+            //var newUser = new User
+
+            //var NewUser = new user { FullName = user.FullName, Email = user.Email, Password = user.Password, };
+            //{
+            //    FullName = user.FullName,
+            //    Email = user.Email,
+            //    Password = user.Password,
+            //};
+            //await _db.SaveChangesAsync();
+            //return Ok("A new user is successfully created {newUser}");
+
+            //var userInDb = await _db.Users.FirstOrDefault(u => u.Email == user.Email);
+
         }
 
         //{
@@ -105,6 +191,7 @@ namespace HS_TopStyleWebApi.Controllers
             //return Ok(UserDTO);
             return user is not null ? Ok(loginDTO) : NotFound();
         }
+        */
 
     }
 }

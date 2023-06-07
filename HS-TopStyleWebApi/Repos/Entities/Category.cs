@@ -13,8 +13,10 @@ namespace HS_TopStyleWebApi.Repos.Entities
 
         public virtual ICollection<Product>? Products { get; set; }
 
-        public Category()
+        public Category(int categoryId, string categoryName)
         {
+            CategoryId = categoryId;
+            CategoryName = categoryName;
         }
 
     }

@@ -15,10 +15,10 @@ namespace HS_TopStyleWebApi.Repository.Repos
     public class OrderRepository : IOrderRepository
     {
         // sätts upp via Dependency Injection för att kunna läsa från databasen
-        private readonly ProductContext _context;
-        public OrderRepository(ProductContext context)
+        private readonly ProductContext _db;
+        public OrderRepository(ProductContext db)
         {
-            _context = context;
+            _db = db;
         }
 
         //private readonly string _connectionString;
@@ -46,15 +46,15 @@ namespace HS_TopStyleWebApi.Repository.Repos
             };
 
             //await DbContext.Order.AddAsync(newOrder);
-            await _context.Orders.AddAsync(newOrder);
-            await _context.SaveChangesAsync();
+            await _db.Orders.AddAsync(newOrder);
+            await _db.SaveChangesAsync();
             return newOrder.OrderId;
         }
 
         // Get order by id and return a list of orders
         public async Task <List<GetOrderDTO>> GetOrderById(int id)
         {
-            var order = await _context.Orders.FirstOrDefaultAsync(o => o.OrderId == id);
+            var order = await _db.Orders.FirstOrDefaultAsync(o => o.OrderId == id);
 
             if (order == null)
             {
@@ -79,7 +79,7 @@ namespace HS_TopStyleWebApi.Repository.Repos
 // Delete order by id
 //public async Task <OrderDTO> DeleteOrder(int id)
 //{
-//    var order = await _context.Orders.FirstOrDefaultAsync(o => o.OrderId == id);
+//    var order = await _db.Orders.FirstOrDefaultAsync(o => o.OrderId == id);
 
 //    if (order == null)
 //    //{
@@ -87,7 +87,7 @@ namespace HS_TopStyleWebApi.Repository.Repos
 //    //}
 
 //    _context.Orders.Remove(order);
-//    await _context.SaveChangesAsync();
+//    await _db.SaveChangesAsync();
 //    // return a value from the method of deleting an order matching the OrderDTO:
 
 //    return order;

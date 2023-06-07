@@ -1,4 +1,5 @@
 using HS_TopStyleWebApi.Repos.Entities;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
 using System.Text;
@@ -43,55 +44,65 @@ namespace HS_TopStyleWebApi
 
             // Add services to the container.
 
-            builder.Services.AddControllers()
-                .AddJsonOptions(options =>
-                {
-                    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
-                    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
-                    options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
-                });
+            builder.Services.AddControllers();
+            //    .AddJsonOptions(options =>
+            //{
+            //    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.Preserve;
+            //    options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+            //    options.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull;
+            //});
 
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
             builder.Services.AddTransient<IProductRepository, ProductRepository>();
             builder.Services.AddTransient<IOrderRepository, OrderRepository>();
             builder.Services.AddTransient<IUserRepository, UserRepository>();
             //builder.Services.AddTransient<IOrderItemRepository, OrderItemRepository>();
-            builder.Services.AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>();
-            builder.Services.AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>();
+            //builder.Services.AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>();
+            //builder.Services.AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>();
 
-            //builder.Services.AddDbContext<ProductContext>(
-            //    options => options.UseSqlServer(@"Data Source=localhost;Initial Catalog=TopStyle;Integrated Security=SSPI;TrustServerCertificate=True;")
-            //    // I DEMON: 
-            //    //options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
-            //    );
+
+            builder.Services.AddDbContext<ProductContext>(options => options.UseSqlServer
+            (builder.Configuration.GetConnectionString("DefaultConnection")));
+
+            // här sätts tjänsten upp som kan injectas
+            builder.Services.AddIdentity<User, IdentityRole>()
+                .AddEntityFrameworkStores<ProductContext>()
+                .AddDefaultTokenProviders();
+
+            //builder.Services.AddTransient<IProductRepository, ProductRepository>();
+            //builder.Services.AddTransient<IOrderRepository, OrderRepository>();
+            //builder.Services.AddTransient<IUserRepository, UserRepository>();
+            ////builder.Services.AddTransient<IOrderItemRepository, OrderItemRepository>();
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 
-            var jwtSettings = new JwtSettings();
-            builder.Services.AddSingleton(Options.Create(jwtSettings));
-            builder.Configuration.Bind(JwtSettings.SectionName, jwtSettings);
 
-            builder.Services.AddAuthentication(opt =>
-            {
-                opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            });
+            //var jwtSettings = new JwtSettings();
+            //builder.Services.AddSingleton(Options.Create(jwtSettings));
+            //builder.Configuration.Bind(JwtSettings.SectionName, jwtSettings);
 
-            builder.Services.AddAuthentication(defaultScheme: JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(options => options.TokenValidationParameters = new TokenValidationParameters()
-                {
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
-                    ValidateLifetime = true,
-                    ValidateIssuerSigningKey = true,
-                    //ValidIssuer = jwtSettings.Issuer,
-                    ValidIssuer = "http://localhost:5111/",
-                    //ValidAudience = jwtSettings.Audience,
-                    ValidAudience = "http://localhost:5111/",
-                    //IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.SecretKey))
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("mysecretKey12345!#"))
-                });
+            //builder.Services.AddAuthentication(opt =>
+            //{
+            //    opt.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            //    opt.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            //});
+
+            //builder.Services.AddAuthentication(defaultScheme: JwtBearerDefaults.AuthenticationScheme)
+            //    .AddJwtBearer(options => options.TokenValidationParameters = new TokenValidationParameters()
+            //    {
+            //        ValidateIssuer = true,
+            //        ValidateAudience = true,
+            //        ValidateLifetime = true,
+            //        ValidateIssuerSigningKey = true,
+            //        //ValidIssuer = jwtSettings.Issuer,
+            //        ValidIssuer = "http://localhost:5111/",
+            //        //ValidAudience = jwtSettings.Audience,
+            //        ValidAudience = "http://localhost:5111/",
+            //        //IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.SecretKey))
+            //        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("mysecretKey12345!#"))
+            //    });
 
             builder.Services.AddSwaggerGen(options =>
             {
@@ -128,50 +139,13 @@ namespace HS_TopStyleWebApi
 
             }
 
-            //if (builder.Environment.IsDevelopment())
-            //{
-            //    builder.Services.AddDbContext<ProductContext>(options =>
-            //    {
-            //        options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
-            //    });
-            //}
-
             if (builder.Environment.IsDevelopment())
             {
-                builder.Services.AddDbContext<ProductContext>(
-                        options => options.UseSqlServer(@"Server=tcp:kv-hstopstylewebapi.vault.azure.net,1433;Initial Catalog=HSTopStyleWebApi;Persist Security Info=False;User ID=hsazure22;Password=Hstopstyle22;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;")
-                 );
-            }
-
-
-            // *** Eventuellt ska denna kod tas med ***
-            ////Options.AddSecurityRequirement(new OpenApiSecurityRequirement
-            ////{
-            ////    {
-            ////        new OpenApiSecurityScheme
-            ////        {
-            ////            Reference = new OpenApiReference
-            ////            {
-            ////                    Type = ReferenceType.SecurityScheme,
-            ////                    Id = "bearer"
-            ////                }
-            ////        },
-            //// //       new List<string>()
-            //////        // Mitt alternativ från Recipe
-            ////        Array.Empty<string>()
-            ////   }
-            ////});
-
-            builder.Services.AddCors(opt =>
-            {
-                opt.AddPolicy(name: "CorsPolicy", builder =>
+                builder.Services.AddDbContext<ProductContext>(options =>
                 {
-                    builder.WithOrigins("http://localhost:5111")
-                        .AllowAnyHeader()
-                        .AllowAnyMethod()
-                        .AllowCredentials();
+                    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
                 });
-            });
+            }
 
             var app = builder.Build();
 
@@ -183,34 +157,26 @@ namespace HS_TopStyleWebApi
                 {
                     endpoint.SwaggerEndpoint("/swagger/v1/swagger.json", "HS-TopStyleWebApi v1");
                 });
-
-                //app.UseSwagger();
-                //app.UseSwaggerUI();
-                //app.UseSwaggerUI(endpoint =>
-                //{
-                //    endpoint.SwaggerEndpoint("/swagger/v1/swagger.json", "HS-TopStyleWebApi v1");
-                //});
-
-                app.UseHttpsRedirection();
-                app.UseRouting();
-                //app.UseSwagger();
-                //app.UseSwaggerUI(endpoint =>
-                //{
-                //    endpoint.SwaggerEndpoint("/swagger/v1/swagger.json", "HS-TopStyleWebApi v1");
-                //});
-                app.UseAuthentication();
-                app.UseAuthorization();
-                /*app.MapControllers()*/
-                ;
-                app.UseEndpoints(endpoints =>
-                {
-                    endpoints.MapControllers();
-                });
-
-                app.Run();
             }
+
+            app.UseHttpsRedirection();
+
+            //Detta skall göras innan routingen kopplas på
+            app.UseAuthentication();
+
+
+            app.UseRouting();
+
+            app.UseAuthorization();
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+            });
+
+            app.Run();
         }
     }
+
 }
 
 //Detta kommando lägger en migration i en speciell mapp som vi styr 
@@ -221,4 +187,10 @@ namespace HS_TopStyleWebApi
 //update-database
 
 //add-migration updateHS-TopStyle -o Repos\Migrations
+//update-database
+
+//add-migration updateSQLHS-TopStyle -o Repos\Migrations
+//update-database
+
+//add-migration updateAuthHS-TopStyle -o Repos\Migrations
 //update-database

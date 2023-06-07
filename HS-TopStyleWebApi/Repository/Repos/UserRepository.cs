@@ -23,14 +23,15 @@ namespace HS_TopStyleWebApi.Repository.Repos
         //private readonly IConfiguration _configuration;
         //private readonly ProductContext _context;
 
-        //public UserRepository(IConfiguration configuration, ProductContext context)
+        //public UserRepository(IConfiguration configuration, ProductContext db)
         //{
         //    _configuration = configuration;
-        //    _context = context;
+        //    _db = db;
         //    //_db = db;
         //}
 
-        // POST - Register User
+        // POST - Register user - using linq and lambda and async task with RegisterDTO
+
         public async Task<int> RegisterUser(RegisterDTO user)
         {
             var newUser = new User
@@ -41,7 +42,20 @@ namespace HS_TopStyleWebApi.Repository.Repos
 
             }; await _db.SaveChangesAsync();
             return newUser.UserId;
-        }
+        }   
+
+
+        //public async Task<int> RegisterUser(RegisterDTO user)
+        //{
+        //    var newUser = new User
+        //    {
+        //        FullName = user.FullName,
+        //        Email = user.Email,
+        //        Password = user.Password,
+
+        //    }; await _db.SaveChangesAsync();
+        //    return newUser.UserId;
+        //}
 
         //POST - Login User
         public async Task<User?> LoginUser(LoginDTO loginDTO)

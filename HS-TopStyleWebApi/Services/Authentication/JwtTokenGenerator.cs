@@ -20,6 +20,8 @@ namespace HS_TopStyleWebApi.Services.Authentication
 
         public string GenerateToken(User user)
         {
+            // generate token that is valid for 7 days
+
             var signingCredentials = new SigningCredentials(
                                new SymmetricSecurityKey
                                (Encoding.UTF8.GetBytes(_jwtSettings.SecretKey)),
@@ -28,14 +30,14 @@ namespace HS_TopStyleWebApi.Services.Authentication
             var claims = new List<Claim>
             {
                 // new claim for email
-                //new Claim(JwtRegisteredClaimNames.Email, user.Email),
+                new Claim(JwtRegisteredClaimNames.Email, user.Email),
                 // new claim for username
                 //new Claim(JwtRegisteredClaimNames.Sub, user.UserName),
                 // new claim for role
                 //new Claim(JwtRegisteredClaimNames.Jti, user.Role),
                 // new claim for id
                 //new Claim(JwtRegisteredClaimNames.Jti, user.UserId.ToString()),
-            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+            //new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
             // new claim for UserId
             //new Claim("UserId", user.UserId.ToString()),
             // eller så här:
