@@ -33,7 +33,6 @@ namespace HS_TopStyleWebApi.Controllers
         //}
 
         private readonly ProductContext _db;
-        //private readonly IOrderRepository orderRepository;
         private readonly IUserRepository _userRepository;
         private readonly IJwtTokenGenerator _jwtTokenGenerator;
 
@@ -46,6 +45,7 @@ namespace HS_TopStyleWebApi.Controllers
         }
 
         // Register a user
+        [AllowAnonymous]
         [HttpPost("register")]
         public async Task< IActionResult >RegisterUser(RegisterDTO user)
         {
@@ -56,6 +56,7 @@ namespace HS_TopStyleWebApi.Controllers
         }
 
         // Login a user
+        [AllowAnonymous]
         [HttpPost("login")]
 
         public async Task <IActionResult>LoginUser(LoginDTO user)

@@ -11,6 +11,10 @@ namespace HS_TopStyleWebApi.Repos.Entities
         [StringLength(50)]
         public string? CategoryName { get; set; }
 
+        public int? ProductId { get; set; }
+
+
+        // varje kategori kan ha flera produkter
         public virtual ICollection<Product>? Products { get; set; }
 
         public Category(int categoryId, string categoryName)

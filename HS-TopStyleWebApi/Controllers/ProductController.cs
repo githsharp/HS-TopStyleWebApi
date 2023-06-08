@@ -2,6 +2,7 @@
 using HS_TopStyleWebApi.Repository.Interfaces;
 using HS_TopStyleWebApi.Repository.Repos;
 using HS_TopStyleWebApi.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,16 +15,16 @@ namespace HS_TopStyleWebApi.Controllers
         //Sätts upp via Dependency Injection för att kunna läsa från databasen
 
         private readonly ProductContext _db;
-        private readonly IProductRepository _productRepository;
-        private readonly IOrderRepository _orderRepository;
-        private readonly IUserRepository _userRepository;
+        //private readonly IProductRepository _productRepository;
+        //private readonly IOrderRepository _orderRepository;
+        //private readonly IUserRepository _userRepository;
 
-        public ProductController(ProductContext db, IProductRepository productRepository, IOrderRepository orderRepository, IUserRepository userRepository)
+        public ProductController(ProductContext db)
         {
             _db = db;
-            _productRepository = productRepository;
-            _orderRepository = orderRepository;
-            _userRepository = userRepository;
+            //_productRepository = productRepository;
+            //_orderRepository = orderRepository;
+            //_userRepository = userRepository;
          }
 
         // denna ska egentligen bort!
@@ -37,7 +38,7 @@ namespace HS_TopStyleWebApi.Controllers
         //}
 
         // get - all products
-        //[AllowAnonymous]
+        [AllowAnonymous]
         [HttpGet("allproducts")]
         public IActionResult GetProduct()
         {
@@ -46,8 +47,7 @@ namespace HS_TopStyleWebApi.Controllers
 
         }
         // get - all products by category
-        // [AllowAnonymous]
-        //[HttpGet("{CategoryId}")]
+        [AllowAnonymous]
         [HttpGet("productbycategory")]
         public IActionResult GetProductByCategory(int CategoryId)
         {
@@ -56,7 +56,7 @@ namespace HS_TopStyleWebApi.Controllers
         }
 
         // get product by price
-        //[AllowAnonymous]
+        [AllowAnonymous]
         [HttpGet("productbyprice")]
         public IActionResult GetProductByPrice(decimal Price)
         {
@@ -65,7 +65,7 @@ namespace HS_TopStyleWebApi.Controllers
         }
 
         //get product by name
-        //[AllowAnonymous]
+        [AllowAnonymous]
         [HttpGet("productbyname")]
         public IActionResult GetProductByName(string ProductName)
         {

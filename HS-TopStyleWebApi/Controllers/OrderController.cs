@@ -18,15 +18,15 @@ namespace HS_TopStyleWebApi.Controllers
     {
         private readonly ProductContext _db;
         private readonly IOrderRepository _orderRepository;
-        private readonly IProductRepository _productRepository;
-        private readonly IUserRepository _userRepository;
+        //private readonly IProductRepository _productRepository;
+        //private readonly IUserRepository _userRepository;
 
-        public OrderController(ProductContext db, IOrderRepository orderRepository, IProductRepository productRepository, IUserRepository userRepository)
+        public OrderController(ProductContext db, IOrderRepository orderRepository)
         {
             _db = db;
             _orderRepository = orderRepository;
-            _productRepository = productRepository;
-            _userRepository = userRepository;
+            //_productRepository = productRepository;
+            //_userRepository = userRepository;
         }
 
         //create an order

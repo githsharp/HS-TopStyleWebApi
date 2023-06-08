@@ -15,8 +15,12 @@ namespace HS_TopStyleWebApi.Repos.Entities
         [Required]
         public int TotalSum { get; set; }
 
+        // varje order kan ha flera produkter
         public virtual ICollection<Product>? Products { get; set; }
+
+        // varje order har en användare
         public virtual User? Users { get; set; }
+
 
         public Order()
         {

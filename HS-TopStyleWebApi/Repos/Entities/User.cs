@@ -15,7 +15,7 @@ namespace HS_TopStyleWebApi.Repos.Entities
         [StringLength(50)]
         public string? FullName { get; set; }
         [Required]
-        public string Email { get; set; }
+        public string? Email { get; set; }
         [Required]
         public string? Password { get; set; }
 
@@ -24,17 +24,5 @@ namespace HS_TopStyleWebApi.Repos.Entities
         //varje användare kan ha flera ordrar
         public virtual ICollection <Order>? Orders { get; set; }
 
-       //public User(int userId, string fullName, string email, string password)
-       // {
-       //     UserId = userId;
-       //     FullName = fullName;
-       //     Email = email;
-       //     Password = password;
-       //     Gender = Gender;
-       // }
-
-       // public User()
-       // {
-       // }
     }
 }

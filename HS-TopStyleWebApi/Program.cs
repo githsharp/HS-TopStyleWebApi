@@ -126,7 +126,7 @@ namespace HS_TopStyleWebApi
                     endpoint.SwaggerEndpoint("/swagger/v1/swagger.json", "HS-TopStyleWebApi v1");
                 });
             }
-
+            // ska denna vara kvar, även om man inte preppar för HTTPS?
             app.UseHttpsRedirection();
 
             //Detta skall göras innan routingen kopplas på

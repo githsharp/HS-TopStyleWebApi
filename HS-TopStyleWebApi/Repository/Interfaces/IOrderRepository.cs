@@ -10,9 +10,12 @@ namespace HS_TopStyleWebApi.Repository.Interfaces
     public interface IOrderRepository
     {
         // POST - Create Order
+        // pausar denna:
+        //
         Task<Order> CreateOrder(CreateOrderDTO order);
-        //alt denna:
-        //Task<int> CreateOrder(CreateOrderDTO order);
+        //provar istället denna:
+        //
+       // Task<int> CreateOrder(CreateOrderDTO order);
 
         // GET - Get Order by Id
         //Task<List<GetOrderDTO>> GetOrderById(int id);

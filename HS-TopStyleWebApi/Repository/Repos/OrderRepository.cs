@@ -21,6 +21,8 @@ namespace HS_TopStyleWebApi.Repository.Repos
         }
 
         // Create order
+        // ska matcha mot denna:
+        //       Task<Order> CreateOrder(CreateOrderDTO order);
         public async Task<Order> CreateOrder(CreateOrderDTO order)
         {
             var newOrder = new Order
@@ -37,8 +39,27 @@ namespace HS_TopStyleWebApi.Repository.Repos
             return createdOrder;
         }
 
-        // get all orders
-        public async Task<List<OrderDTO>> GetOrder(OrderDTO order)
+    // Create order - variant
+    // ska matcha mot denna:
+    //       Task<Order> CreateOrder(CreateOrderDTO order);
+    //public async Task<int> CreateOrder(CreateOrderDTO order)
+    //{
+    //    var newOrder = new Order
+    //    {
+    //        UserId = order.UserId,
+    //        ProductId = order.ProductId,
+    //        Quantity = order.Quantity,
+    //        TotalSum = order.TotalSum,
+    //    };
+
+    //    await _db.Orders.AddAsync(newOrder);
+    //    await _db.SaveChangesAsync();
+    //    var createdOrder = await _db.Orders.SingleOrDefaultAsync(o => o.OrderId == newOrder.OrderId);
+    //    return createdOrder.OrderId;
+    //}
+
+    // get all orders
+    public async Task<List<OrderDTO>> GetOrder(OrderDTO order)
         {
             return await _db.Orders.Select(o => new OrderDTO
             {

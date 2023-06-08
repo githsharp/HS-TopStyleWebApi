@@ -10,17 +10,9 @@ namespace HS_TopStyleWebApi.Repository.Interfaces
     {
 
         // POST - Register User
-        // prova denna?
         Task<User> RegisterUser(RegisterDTO user);
-        //alt:
-        //Task<int> RegisterUser(RegisterDTO user);
 
         // POST - Login User
-        // prova denna?
-        // Task<UserDTO?> LoginUser(UserDTO user);
         Task<User?> LoginUser(LoginDTO loginDTO);
-        // alt:
-        //Task<User?> LoginUser(LoginDTO loginDTO);
-
     }
 }
