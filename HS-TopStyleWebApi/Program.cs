@@ -172,3 +172,6 @@ namespace HS_TopStyleWebApi
 
 //add-migration updateAzHS-TopStyle -o Repos\Migrations
 //update-database
+
+//add-migration updateCategAzHS-TopStyle -o Repos\Migrations
+//update-database

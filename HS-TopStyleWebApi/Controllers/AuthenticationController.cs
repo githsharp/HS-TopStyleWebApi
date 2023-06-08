@@ -66,21 +66,5 @@ namespace HS_TopStyleWebApi.Controllers
             var token = _jwtTokenGenerator.GenerateToken2(createdUser);
             return Ok(token);
         }
-
-        //public async Task<IActionResult> Login(LoginDTO loginDTO)
-        //{
-        //    var user = await _db.Users.FirstOrDefaultAsync(u => u.FullName == loginDTO.FullName && u.Password == loginDTO.Password);
-        //    return user is null ? NotFound() : Ok(loginDTO);
-        //    //var token = _jwtTokenGenerator.GenerateToken(user);
-        //    UserDTO userDTO = new UserDTO
-        //    {
-        //        FullName = user.FullName,
-        //        Password = user.Password
-        //    };
-
-        //    return user is not null ? Ok(loginDTO) : NotFound();
-
-        //}
-
     }
 }
