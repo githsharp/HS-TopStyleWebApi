@@ -62,8 +62,9 @@ namespace HS_TopStyleWebApi
             builder.Services.AddSingleton<IJwtTokenGenerator, JwtTokenGenerator>();
 
 
-            builder.Services.AddDbContext<ProductContext>(options => options.UseSqlServer
-            (builder.Configuration.GetConnectionString("DefaultConnection")));
+            //builder.Services.AddDbContext<ProductContext>(options => options.UseSqlServer());
+            //builder.Services.AddDbContext<ProductContext>(options => options.UseSqlServer
+            //(builder.Configuration.GetConnectionString("DefaultConnection")));
 
             // här sätts tjänsten upp som kan injectas
             builder.Services.AddIdentity<User, IdentityRole>()
@@ -161,4 +162,13 @@ namespace HS_TopStyleWebApi
 //update-database
 
 //add-migration updateAuthHS-TopStyle -o Repos\Migrations
+//update-database
+
+//add-migration updateCntrlHS-TopStyle -o Repos\Migrations
+//update-database
+
+//add-migration createAzHS-TopStyle -o Repos\Migrations
+//update-database
+
+//add-migration updateAzHS-TopStyle -o Repos\Migrations
 //update-database
