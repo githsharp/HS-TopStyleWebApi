@@ -88,27 +88,29 @@ namespace HS_TopStyleWebApi
 
             });
 
+            //pga KeuVault-nedstängning är denna utbytt mot IsProduction längre ner i koden
+
+            //if (builder.Environment.IsDevelopment())
+            //{
+            //    var keyVaultURL = builder.Configuration.GetSection("KeyVault:KeyVaultURL");
+            //    var keyVaultClientId = builder.Configuration.GetSection("KeyVault:ClientId");
+            //    var keyVaultClientSecret = builder.Configuration.GetSection("KeyVault:ClientSecret");
+            //    var keyVaultDirectoryID = builder.Configuration.GetSection("KeyVault:DirectoryID");
+
+            //    var credential = new ClientSecretCredential(keyVaultDirectoryID.Value!.ToString(), keyVaultClientId.Value!.ToString(), keyVaultClientSecret.Value!.ToString());
+
+            //    builder.Configuration.AddAzureKeyVault(keyVaultURL.Value!.ToString(), keyVaultClientId.Value!.ToString(), keyVaultClientSecret.Value!.ToString(), new DefaultKeyVaultSecretManager());
+
+            //    var client = new SecretClient(new Uri(keyVaultURL.Value!.ToString()), credential);
+
+            //    builder.Services.AddDbContext<ProductContext>(options =>
+            //    {
+            //        options.UseSqlServer(client.GetSecret("ProdConnection").Value.Value.ToString());
+            //    });
+
+            //}
+
             if (builder.Environment.IsProduction())
-            {
-                var keyVaultURL = builder.Configuration.GetSection("KeyVault:KeyVaultURL");
-                var keyVaultClientId = builder.Configuration.GetSection("KeyVault:ClientId");
-                var keyVaultClientSecret = builder.Configuration.GetSection("KeyVault:ClientSecret");
-                var keyVaultDirectoryID = builder.Configuration.GetSection("KeyVault:DirectoryID");
-
-                var credential = new ClientSecretCredential(keyVaultDirectoryID.Value!.ToString(), keyVaultClientId.Value!.ToString(), keyVaultClientSecret.Value!.ToString());
-
-                builder.Configuration.AddAzureKeyVault(keyVaultURL.Value!.ToString(), keyVaultClientId.Value!.ToString(), keyVaultClientSecret.Value!.ToString(), new DefaultKeyVaultSecretManager());
-
-                var client = new SecretClient(new Uri(keyVaultURL.Value!.ToString()), credential);
-
-                builder.Services.AddDbContext<ProductContext>(options =>
-                {
-                    options.UseSqlServer(client.GetSecret("ProdConnection").Value.Value.ToString());
-                });
-
-            }
-
-            if (builder.Environment.IsDevelopment())
             {
                 builder.Services.AddDbContext<ProductContext>(options =>
                 {
@@ -117,24 +119,30 @@ namespace HS_TopStyleWebApi
             }
 
             var app = builder.Build();
+            app.UseRouting();
+
+            app.UseSwagger();
+            app.UseSwaggerUI(endpoint =>
+            {
+                endpoint.SwaggerEndpoint("/swagger/v1/swagger.json", "HS-TopStyleWebApi v1");
+            });
 
             // Configure the HTTP request pipeline.
-            if (app.Environment.IsDevelopment())
-            {
-                app.UseSwagger();
-                app.UseSwaggerUI(endpoint =>
-                {
-                    endpoint.SwaggerEndpoint("/swagger/v1/swagger.json", "HS-TopStyleWebApi v1");
-                });
-            }
+            //if (app.Environment.IsDevelopment())
+            //{
+            ////    app.UseSwagger();
+            ////    app.UseSwaggerUI(endpoint =>
+            ////    {
+            ////        endpoint.SwaggerEndpoint("/swagger/v1/swagger.json", "HS-TopStyleWebApi v1");
+            ////    });
+            //}
             // ska denna vara kvar, även om man inte preppar för HTTPS?
             app.UseHttpsRedirection();
 
             //Detta skall göras innan routingen kopplas på
             app.UseAuthentication();
 
-
-            app.UseRouting();
+            //app.UseRouting();
 
             app.UseAuthorization();
             app.UseEndpoints(endpoints =>
